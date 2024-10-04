@@ -1,0 +1,51 @@
+#include <iostream>
+#include <iostream>
+#include <stdlib.h>
+
+
+using namespace std;
+//definir una constante para el arreglo
+const int MAXIMO=1000
+class Vector {
+    private:
+        int V[MAXIMO];
+        int cantidadElementos;
+    public:
+        Vector(){
+        cantidadElementos=0;
+        }
+        int cantidadElementos(){
+            return cantidadElementos;
+        }
+        void adicionar(int x){
+            if(cantidadElementos<MAXIMO){
+            V[cantidadElementos]=x;
+            cantidadElementos++;
+        }else
+            throw "no hay mas espacio";
+        }
+        int obtener (int pos){
+            if (pos>=0 && pos<cantidadElementos)
+                return V(pos);
+            else
+                throw "Error: Posicion no valida";
+        }
+        void mostrar(){
+            for(int i=0;i<cantidadElementos;i++)
+                cout<<V[i]<<", ";
+        }
+        void EliminarElemento(int pos){
+            if (pos>=0 && pos<cantidadElementos)
+                for(int i=0;i<cantidadElementos-1;i++)
+                    V[i]=V[i+1];
+                cantidadElementos--;
+            else
+                throw "Error: Posicion no valida";
+        }
+
+};
+int main()
+{
+    cout << "Hello world!" << endl;
+    return 0;
+}

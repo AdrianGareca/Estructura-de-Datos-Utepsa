@@ -1,0 +1,222 @@
+#include <fstream>
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+// Definir una constante para el arreglo
+const int MAXIMO = 1000;
+
+class Vector {
+private:
+    int V[MAXIMO];
+    int cantidadElementos;
+
+public:
+    Vector() {
+        cantidadElementos = 0;
+    }
+
+    int cantidadElem() {
+        return cantidadElementos;
+    }
+
+    void adicionar(int x) {
+        if (cantidadElementos < MAXIMO) {
+            V[cantidadElementos] = x;
+            cantidadElementos++;
+        } else
+            throw "No hay más espacio";
+    }
+
+    int obtener(int pos) {
+        if (pos >= 0 && pos < cantidadElementos)
+            return V[pos];
+        else
+            throw "Error: Posición no válida";
+    }
+
+    void mostrar() {
+        for (int i = 0; i < cantidadElementos; i++)
+            cout << V[i] << ", ";
+        cout << endl;
+    }
+
+    void eliminarElemento(int pos) {
+        if (pos >= 0 && pos < cantidadElementos) {
+            for (int i = pos; i < cantidadElementos - 1; i++) {
+                V[i] = V[i + 1];
+            }
+            cantidadElementos--;
+        } else
+            throw "Error: Posición no válida";
+    }
+
+    void limpiarVector() {
+        cantidadElementos = 0;
+    }
+
+    void generarNumeroPares(int n) {
+        limpiarVector();
+        if (n > 0 && n < MAXIMO) {
+            int x = 2;
+            for (int i = 0; i < n; i++) {
+                adicionar(x);
+                x = x + 2;
+            }
+        }
+    }
+
+    void generarSerieFibonacci(int n) {
+        limpiarVector();
+        int a = -1, b = 1, r = 0;
+        for (int i = 0; i < n; i++) {
+            r = a + b;
+            adicionar(r);
+            a = b;
+            b = r;
+        }
+    }
+
+    void generarNumerosCuadrados(int n) {
+        limpiarVector();
+        for (int i = 0; i < n; i++) {
+            adicionar(i * i);
+        }
+    }
+
+    void guardarDatos(string nombreArchivo) {
+        ofstream archivo(nombreArchivo);
+        if (!archivo)
+            throw "Error al abrir el archivo para escritura";
+        for (int i = 0; i < cantidadElem(); i++)
+            archivo << V[i] << endl;
+        archivo.close();
+    }
+
+    void leerDesdeArchivo(string nombreArchivo) {
+        ifstream archivo(nombreArchivo);
+        limpiarVector();
+        if (!archivo.is_open())
+            throw "Error al abrir el archivo para lectura";
+        int valor;
+        while (archivo >> valor)
+            adicionar(valor);
+        archivo.close();
+    }
+};
+
+class Operaciones {
+public:
+    static Vector* ContarParesImpares(Vector* vec) {
+        Vector* respuesta = new Vector();
+        int n = vec->cantidadElem();
+        int cp = 0, ci = 0;
+        for (int i = 0; i < n; i++) {
+            if (vec->obtener(i) % 2 == 0)
+                cp++;
+            else
+                ci++;
+        }
+        respuesta->adicionar(cp);
+        respuesta->adicionar(ci);
+        return respuesta;
+    }
+};
+
+Vector* v1 = new Vector();
+
+void procesarOpcion1() {
+    int n, x;
+    system("cls");
+    cout << "¿Cuántos elementos desea adicionar?: " << endl;
+    cin >> n;
+    for (int i = 1; i <= n; i++) {
+        cout << "Ingrese el elemento " << i << ": " << endl;
+        cin >> x;
+        v1->adicionar(x);
+    }
+    system("pause");
+}
+
+void procesarOpcion2() {
+    int p;
+    system("cls");
+    cout << "Ingrese la posición del elemento: " << endl;
+    cin >> p;
+    try {
+        int x = v1->obtener(p);
+        cout << "El elemento en la posición " << p << " es: " << x << endl;
+    } catch (const char* mensaje) {
+        cout << mensaje << endl;
+    }
+    system("pause");
+}
+
+void procesarOpcion3() {
+    system("cls");
+    cout << "Datos del vector: " << endl;
+    v1->mostrar();
+    system("pause");
+}
+
+void procesarOpcion8() {
+    system("cls");
+    Vector* r = Operaciones::ContarParesImpares(v1);
+    cout << "Conteo de pares: " << r->obtener(0) << endl;
+    cout << "Conteo de impares: " << r->obtener(1) << endl;
+    delete r;
+    system("pause");
+}
+
+void procesarOpcion9() {
+    system("cls");
+    v1->guardarDatos("datos.txt");
+    cout << "Archivo guardado." << endl;
+    system("pause");
+}
+
+void procesarOpcion10() {
+    system("cls");
+    v1->leerDesdeArchivo("datos.txt");
+    cout << "Datos cargados desde el archivo en disco." << endl;
+    system("pause");
+}
+
+int main() {
+    int opcion;
+    do {
+        try {
+            system("cls");
+            cout << "Vector de números enteros" << endl;
+            cout << "-------------------------" << endl;
+            cout << "1. Adicionar elementos" << endl;
+            cout << "2. Obtener elemento" << endl;
+            cout << "3. Mostrar elementos" << endl;
+            cout << "4. Eliminar elemento" << endl;
+            cout << "5. Generar números pares" << endl;
+            cout << "6. Generar serie Fibonacci" << endl;
+            cout << "7. Generar cuadrados" << endl;
+            cout << "8. Contar pares e impares" << endl;
+            cout << "9. Guardar datos en archivo" << endl;
+            cout << "10. Leer datos desde archivo" << endl;
+            cout << "11. Salir" << endl;
+            cout << "Seleccione una opción: ";
+            cin >> opcion;
+
+            switch (opcion) {
+                case 1: procesarOpcion1(); break;
+                case 2: procesarOpcion2(); break;
+                case 3: procesarOpcion3(); break;
+                case 8: procesarOpcion8(); break;
+                case 9: procesarOpcion9(); break;
+                case 10: procesarOpcion10(); break;
+            }
+        } catch (const char* mensaje) {
+            cout << mensaje << endl;
+            system("pause");
+        }
+    } while (opcion != 11);
+
+    return 0;
+}

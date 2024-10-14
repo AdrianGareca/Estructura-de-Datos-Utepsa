@@ -100,6 +100,16 @@ class Vector{
 };
 
 class Operaciones{
+    private:
+    static bool numeroEsPrimo(int n){
+      // Casos especiales
+      if (n == 0 || n == 1 || n == 4) return false;
+      for (int x = 2; x < n / 2; x++) {
+        if (n % x == 0) return false;
+      }
+      // Si no se pudo dividir por ninguno de los de arriba, sí es primo
+     return true;
+    }
     public:
     static Vector *ContarParesImpares(Vector *vec){
         Vector *respuesta=new Vector();

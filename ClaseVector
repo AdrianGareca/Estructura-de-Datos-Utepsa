@@ -1,0 +1,352 @@
+#include <fstream>//para asociar variables a archivos
+#include <iostream> //para escribir o leer archivos
+#include <stdlib.h>
+
+
+using namespace std;
+//definir una constante para el arreglo
+const int MAXIMO = 1000;
+class Vector{
+  private:
+    int V[MAXIMO];
+    int cantidadElementos;
+  public:
+      Vector(){
+          cantidadElementos = 0;
+      }
+      //El nombre de una funcion no puede ser igual al nombre de una variable
+      int cantidadEle(){
+          return cantidadElementos;
+      }
+      void adicionar(int x){
+          if (cantidadElementos<MAXIMO){
+            V[cantidadElementos] = x;
+            cantidadElementos++;
+            }else
+               throw "no hay mas espacio";
+      }
+      int obtener(int pos){
+           if (pos>=0 && pos<cantidadElementos)
+            return V[pos];
+           else
+             throw "Error: Posición no valida";
+      }
+      void mostrar(){
+          for (int i=0; i<cantidadElementos; i++)
+            cout<<V[i]<<", ";
+      }
+      void ordenarBurbuja_forma1(){
+          int aux;
+          int n=cantidadElementos;
+          //Esta busqueda necesita dos bucles/
+          for(int i=0;i<n-1;i++)
+            for(int j=0;j<(n-i);j++)
+                if(V[j]>V[j+1])
+                {   //Intercambio
+                    //swap()
+                    aux=V[j];
+                    V[j]=V[j+1];
+                    V[j+1]=aux;
+                }
+      }
+      void ordenarBurbuja_forma1_Desc(){
+          int aux;
+
+          int n=cantidadElementos;
+          for(int i=0;i<n-1;i++)
+            for(int j=0;j<(n-i);j++)
+                if(V[j]<V[j+1])
+                {
+                    aux=V[j];
+                    V[j]=V[j+1];
+                    V[j+1]=aux;
+                }
+      }
+      void ordenarBurbuja_forma2(){
+
+      }
+      //Ordenamiento por seleccion:
+      int PosMay(int ultimo){
+          int indiceMayor=0;
+          for(int i=0;i<ultimo;i++)
+              if(V[i]>V[indiceMayor])
+                indiceMayor=i;
+              return indiceMayor;
+      }
+      void ordenarSeleccion_form1(){
+          int i, j, minIndex, tmp;
+          for(i=0;i<cantidadElementos-1;i++){
+               minIndex=i;
+               for (j=i+1;j<cantidadElementos;j++)
+                    if(V[j]<V[minIndex])
+                        minIndex=j;
+               if(minIndex!=i){
+                   tmp=V[i];
+                   V[i]=V[minIndex];
+                   V[minIndex]=tmp;
+               }
+          }
+      }
+      void ordenarSeleccion_form2_Asc(){
+          int mayor, aux;
+          int n=cantidadElementos-1;
+          for(int i=n;i>0;i--){
+            mayor=PosMay(i);
+            aux=V[mayor];
+            V[mayor]=V[i];
+            V[i]=aux;
+            }
+      }
+      void eliminarElemento(int pos){
+          if (pos>=0 && pos<cantidadElementos){
+            for(int i=pos; i< cantidadElementos-1;i++ )
+               {
+                   V[i]=V[i+1];
+               }
+            cantidadElementos--;
+           }else
+                throw "Error: Posición no valida";
+
+
+         }
+
+      void limpiarVector(){
+          cantidadElementos = 0;
+      }
+      void generarNumerosPares(int n){
+          limpiarVector();
+          if (n>0 && n<MAXIMO){
+            int x=2;
+            for (int i=0; i<n; i++)
+            {
+              adicionar(x);
+              x=x+2;
+            }
+          }
+      }
+      void generarSerieFibonaci(int n){
+          limpiarVector();
+          int a = -1;
+          int b = 1;
+          int r = 0;
+          for (int i=0; i<n;i++)
+          {
+              r = a + b;
+              adicionar(r);
+              a=b;
+              b=r;
+          }
+      }
+      void generarNumerosCuadrados(int n) {
+        limpiarVector();  // Limpia el vector antes de generar nuevos elementos
+
+        int r = 0;
+        for (int i = 0; i < n; i++) {
+        r = i * i;  // Calcula el cuadrado de i
+        adicionar(r);  // Añade el cuadrado al vector
+           }
+      }
+      void guardarDatos(string nombreArchivo){
+          ofstream archivo (nombreArchivo);//verifica la disponibilidad del archivo para escritura
+          if (!archivo)
+            throw "Error al abrir el archivo para escritura";
+          for (int i = 0; i<cantidadEle();i++)
+            archivo<<V[i]<<endl;
+          archivo.close();
+      }
+      void leerDesdeArchivo(string nombreArchivo){
+          ifstream archivo (nombreArchivo);
+          limpiarVector();
+          if (!archivo.is_open())
+              throw "Error al abrir el archivo para lectura";
+          int valor;
+          while(archivo>>valor) //leyendo valor a valor desde del archivo
+            adicionar(valor);
+          archivo.close();//liberar la memoria
+      }
+      Vector *ContarParesImpares(Vector *vec);
+};
+class Operaciones{
+    private:
+    static bool numeroEsPrimo(int n){
+      // Casos especiales
+      if (n == 0 || n == 1 || n == 4) return false;
+      for (int x = 2; x < n / 2; x++) {
+        if (n % x == 0) return false;
+      }
+      // Si no se pudo dividir por ninguno de los de arriba, sí es primo
+     return true;
+    }
+    public:
+    static Vector *ContarParesImpares(Vector *vec){
+        Vector *respuesta=new Vector();
+        int n=vec->cantidadEle();
+        int cp=0, ci=0;
+        for(int i=0;i<n;i++)
+            if((vec->obtener(i)%2==0))
+                cp++;
+            else
+                ci++;
+        respuesta->adicionar(cp);
+        respuesta->adicionar(ci);
+        return respuesta;
+    }
+};
+//Desarriollo de las opciones del menú
+//Declarando la variable v1 de forma general
+Vector *v1 = new Vector();
+void procesarOpcion1(){
+    int n, x;
+    system("cls");
+    cout<<"Cuantos elementos desea adicionar?:"<<endl;
+    cin>>n;
+    for (int i=1; i<=n;i++){
+        cout<<"Ingrese el elemento: "<<i<<endl;
+        cin>>x;
+        v1->adicionar(x);
+    }
+    system("pause");
+}
+void procesarOpcion2(){
+    int p;
+    system("cls");
+    cout<<"Ingrese la posición del elemento?:"<<endl;
+    cin>>p;
+    int x=v1->obtener(p);
+    cout<<x<<endl;
+    system("pause");
+}
+void procesarOpcion3(){
+
+    system("cls");
+    cout<<"Datos del vector: "<<endl;
+    v1->mostrar();
+    cout<<endl;
+    system("pause");
+}
+void procesarOpcion4() {
+    int p;
+    system("cls");
+    cout << "Ingrese la posición del elemento que desea eliminar: ";
+    cin >> p;
+    try {
+        v1->eliminarElemento(p);
+        cout << "Elemento eliminado correctamente." << endl;
+    } catch (const char *mensaje) {
+        cout << mensaje << endl;
+    }
+    system("pause");
+}
+void procesarOpcion5() {
+    int n;
+    system("cls");
+    cout << "¿Cuántos números pares desea generar?: ";
+    cin >> n;
+    try {
+        v1->generarNumerosPares(n);
+        cout << "Serie de números pares generada." << endl;
+        v1->mostrar();
+        cout << endl;
+    } catch (const char *mensaje) {
+        cout << mensaje << endl;
+    }
+    system("pause");
+}
+void procesarOpcion6() {
+    int n;
+    system("cls");
+    cout << "¿Cuántos números de la serie Fibonacci desea generar?: ";
+    cin >> n;
+    try {
+        v1->generarSerieFibonaci(n);
+        cout << "Serie Fibonacci generada." << endl;
+        v1->mostrar();
+        cout << endl;
+    } catch (const char *mensaje) {
+        cout << mensaje << endl;
+    }
+    system("pause");
+}
+void procesarOpcion7() {
+    system("cls");
+    int n;
+    cout << "Ingrese cuántos números cuadrados desea generar: ";
+    cin >> n;
+    v1->generarNumerosCuadrados(n);
+    cout << "Los elementos generados (cuadrados) son: " << endl;
+    v1->mostrar();
+    cout << endl;
+    system("pause");
+}
+void procesarOpcion8(){
+    system("cls");
+    Vector *r =new Vector();
+    r = Operaciones::ContarParesImpares(v1);
+    cout <<"Conteo de pares: "<<r->obtener(0)<<endl;
+    cout <<"Conteo de impares: "<<r->obtener(1)<<endl;
+}
+void procesarOpcion9(){
+    system("cls");
+    v1->guardarDatos("C:/Users/Usuario/Desktop/ProyectoListaEstatica/ListaNumeros.txt");
+    cout<<"Archivo guardado"<<endl;
+    system("pause");
+}
+void procesarOpcion10(){
+    system("cls");
+    v1->leerDesdeArchivo("C:/Users/Usuario/Desktop/ProyectoListaEstatica/ListaNumeros.txt");
+    cout<<"Datos cargados desde el archivo en disco!"<<endl;
+    system("pause");
+}
+void procesarOpcion11(){
+    system("cls");
+    v1->mostrar();
+    cout<<endl;
+    v1->ordenarBurbuja_forma1();
+    cout<<"Lista ordenada de forma ascendente: !"<<endl;
+    v1->mostrar();
+    system("pause");
+}
+
+//Construyendo una clase exclusiva para otras operaciones:
+
+int main()
+{   int opcion;
+    do {
+        //Menú
+        try{
+            cout << "Vector de números enteros" <<endl;
+            cout << "--------------------------" <<endl;
+            cout << "1. Adicionar elementos" <<endl;
+            cout << "2. Obtener elementos" <<endl;
+            cout << "3. Mostrar elementos" <<endl;
+            cout << "4. Eliminar elementos" <<endl;
+            cout << "5. Serie de números pares" <<endl;
+            cout << "6. Serie Fibonacci" <<endl;
+            cout << "7. Elevar al cuadrado" <<endl;
+            cout << "8. Contar pares e impares" <<endl;
+            cout << "9. Guardar datos en archivo"<<endl;
+            cout << "10. Leer datos desde archivo"<<endl;
+            cout << "11. "<<endl;
+            cout <<"------------------------------"<<endl;
+            cin>>opcion;
+            switch(opcion)
+            {
+                case 1: procesarOpcion1();break;
+                case 2: procesarOpcion2();break;
+                case 3: procesarOpcion3();break;
+                case 4: procesarOpcion4();break;
+                case 5: procesarOpcion5();break;
+                case 6: procesarOpcion6();break;
+                case 7: procesarOpcion7();break;
+                case 8: procesarOpcion8();break;
+                case 9: procesarOpcion9();break;
+                case 10: procesarOpcion10();break;
+                case 11: procesarOpcion11();break;
+            }
+        }catch(const char *mensaje){
+            cout << mensaje;
+        }
+    }while(opcion!=11);
+
+    return 0;
+}

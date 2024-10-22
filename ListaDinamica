@@ -1,0 +1,117 @@
+main.cpp
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout << "Hello world!" << endl;
+    return 0;
+}
+
+nodo.h
+#ifndef NODO_H
+#define NODO_H
+#include <iostream>
+
+
+class nodo
+{
+    public:
+        int dato; //para el elemento de nuestra lista
+        nodo *siguiente; //puntero al proximo nodo
+        nodo(); //constructor de la clase
+        //virtual ~nodo();
+};
+
+#endif // NODO_H
+
+nodo.cpp
+#include "nodo.h"
+
+nodo::nodo()
+{
+    dato=0;
+    siguiente=NULL;
+}
+
+ListaEnlazada.h
+#ifndef LISTAENLAZADA_H
+#define LISTAENLAZADA_H
+#include <nodo.h>
+
+using namespace std;
+class ListaEnlazada
+{
+    private:
+        nodo *primero;
+        int dim;
+        //Para añadir otros metodos
+    public:
+        ListaEnlazada();
+        virtual ~ListaEnlazada();
+        //MetodoS:
+        void adicionar(int x);
+        void mostrar();
+        int dimension();
+        void insertarPrimero(int x);
+        void insertarPos(int x, int pos);
+        void eliminaUltimo();
+        //Otros metodos
+
+
+
+};
+
+#endif // LISTAENLAZADA_H
+
+ListaEnlazada.cpp
+#include "ListaEnlazada.h"
+
+ListaEnlazada::ListaEnlazada()
+{
+    primero=NULL; //No existen elementos en Lista
+    dim=0;
+}
+
+ListaEnlazada::~ListaEnlazada()
+{
+    nodo *p=primero;
+    while(p!=NULL){
+        nodo *aux=p;
+        p=p->siguiente;
+        delete aux;
+    }
+}
+void ListaEnlazada::adicionar(int x){
+    nodo *nuevito=new nodo();
+    nuevito->dato=x;
+    if(primero==NULL){
+        primero=nuevito;
+    }
+    else{
+        nodo *p=primero;
+        while(p->siguiente!=NULL){
+            p=p->siguiente;
+        }
+        p->siguiente=nuevito;
+    }
+    dim ++;
+}
+void ListaEnlazada::mostrar(){
+    nodo *p=primero;
+    while(p!=NULL){
+        cout<<p->dato<<", ";
+        p=p->siguiente;
+    }
+}
+int ListaEnlazada::dimension(){
+    return dim;
+}
+void  ListaEnlazada::insertarPrimero(int x){
+    nodo *nuevito=new nodo();
+    nuevito->dato=x;
+    nuevito->siguiente=primero;
+    primero=nuevito;
+    dim++;
+}

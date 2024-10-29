@@ -1,0 +1,94 @@
+#include <iostream>
+using namespace std;
+
+// Definir la estructura del nodo
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+};
+
+// Función para insertar un elemento al final de la lista
+void insertar(Nodo*& cabeza, int valor) {
+    Nodo* nuevo = new Nodo();  // Crear un nuevo nodo
+    nuevo->dato = valor;
+    nuevo->siguiente = nullptr;
+
+    if (cabeza == nullptr) {  // Si la lista está vacía
+        cabeza = nuevo;
+    } else {
+        Nodo* actual = cabeza;
+        while (actual->siguiente != nullptr) {
+            actual = actual->siguiente;  // Ir al final de la lista
+        }
+        actual->siguiente = nuevo;  // Insertar el nuevo nodo
+    }
+}
+
+// Función para imprimir una lista
+void imprimirLista(Nodo* cabeza) {
+    Nodo* actual = cabeza;
+    while (actual != nullptr) {
+        cout << actual->dato << " ";
+        actual = actual->siguiente;
+    }
+    cout << endl;
+}
+
+// Función para fusionar dos listas dinámicas ordenadas
+Nodo* fusionarListasDinamicas(Nodo* l1, Nodo* l2) {
+    Nodo* resultado = nullptr;
+    Nodo** actual = &resultado;  // Puntero doble para manipular la lista fusionada
+
+    // Fusionar ambas listas en orden ascendente
+    while (l1 != nullptr && l2 != nullptr) {
+        if (l1->dato < l2->dato) {
+            *actual = l1;
+            l1 = l1->siguiente;
+        } else {
+            *actual = l2;
+            l2 = l2->siguiente;
+        }
+        actual = &((*actual)->siguiente);
+    }
+
+    // Agregar los elementos restantes de l1 o l2
+    if (l1 != nullptr) {
+        *actual = l1;
+    } else {
+        *actual = l2;
+    }
+
+    return resultado;
+}
+
+int main() {
+    Nodo* lista1 = nullptr;
+    Nodo* lista2 = nullptr;
+
+    // Insertar elementos en la primera lista (ordenada ascendente)
+    insertar(lista1, 2);
+    insertar(lista1, 4);
+    insertar(lista1, 6);
+    insertar(lista1, 8);
+
+    // Insertar elementos en la segunda lista (ordenada ascendente)
+    insertar(lista2, 1);
+    insertar(lista2, 3);
+    insertar(lista2, 5);
+    insertar(lista2, 7);
+
+    // Mostrar las listas originales
+    cout << "Lista 1: ";
+    imprimirLista(lista1);
+    cout << "Lista 2: ";
+    imprimirLista(lista2);
+
+    // Fusionar las listas
+    Nodo* listaFusionada = fusionarListasDinamicas(lista1, lista2);
+
+    // Mostrar la lista fusionada
+    cout << "Lista fusionada: ";
+    imprimirLista(listaFusionada);
+
+    return 0;
+}
